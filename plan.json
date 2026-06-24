@@ -1,0 +1,21 @@
+{
+  "backend": [
+    "NEW supabase/migrations/0004_clients.sql: crear tabla clients (id, org_id FK->organizations, name, phone, email, note text, created_at) con RLS por org_id usando is_member/is_admin (igual que el resto); agregar columna client_id uuid nullable a appointments con FK->clients(id) on delete set null; crear función SECURITY DEFINER find_or_create_client(p_org_id, p_name, p_phone, p_email) que busca por email/teléfono dentro del org y crea si no existe (sin duplicar); redefinir create_appointment y owner_create_appointment para llamar find_or_create_client y guardar client_id en el insert de appointments",
+    "EDIT app/api/appointments/route.ts: en GET incluir client_id en el select (sin romper el flujo existente); el POST sigue usando owner_create_appointment ya actualizada (vinculación de cliente la resuelve la RPC)"
+  ],
+  "frontend": [
+    "EDIT app/dashboard/layout.tsx: agregar enlace de navegación a /dashboard/clientes (Fichas) en el nav del panel",
+    "NEW app/dashboard/clientes/page.tsx: server component que lista los clientes del org (filtrado por org_id vía RLS) con nombre, teléfono y email, enlazando a cada ficha /dashboard/clientes/[id]",
+    "NEW app/dashboard/clientes/[id]/page.tsx: ficha del cliente con datos de contacto + historial de citas (pasadas y futuras con estado, incluido no_show) ordenadas por fecha, mostrando servicio y estado con badge, e incluye la nota editable",
+    "NEW app/dashboard/clientes/[id]/ClientNote.tsx: componente cliente para editar y guardar la nota libre del cliente",
+    "NEW app/api/clients/[id]/route.ts: ruta PATCH para actualizar la nota libre del cliente respetando RLS por org_id (is_member)"
+  ],
+  "acceptance_criteria": [
+    "Existe migración 0004 nueva que crea la tabla clients con org_id, nombre, teléfono, email, created_at y RLS por org_id; no se modifican 0001-0003",
+    "appointments tiene la columna client_id nullable con FK a clients y el constraint no_overlap_booked permanece intacto",
+    "Al reservar desde la página pública o crear una cita manual, se busca o crea el cliente del negocio por email/teléfono sin duplicar dentro del mismo org y la cita queda vinculada vía client_id",
+    "El panel del dueño tiene una pantalla de Fichas alcanzable desde la navegación que lista los clientes del negocio",
+    "Al abrir una ficha se ven datos de contacto, historial de citas pasadas y futuras con su estado (incluido no_show) y una nota libre editable que se guarda",
+    "El aislamiento por org_id se respeta vía RLS en clients y en las consultas; un negocio no ve clientes ni notas de otro"
+  ]
+}
