@@ -21,6 +21,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <Link href="/dashboard/servicios" className="text-sm" style={{ fontWeight: 600 }}>Servicios</Link>
           <Link href="/dashboard/horario" className="text-sm" style={{ fontWeight: 600 }}>Horario</Link>
           <Link href="/dashboard/agenda" className="text-sm" style={{ fontWeight: 600 }}>Agenda</Link>
+          <Link href="/dashboard/clientes" className="text-sm" style={{ fontWeight: 600 }}>Fichas</Link>
         </nav>
         <form action={logout}>
           <button type="submit" className="btn btn-sm btn-ghost">Cerrar sesión</button>
