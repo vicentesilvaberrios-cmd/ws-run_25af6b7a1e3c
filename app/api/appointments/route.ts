@@ -32,7 +32,7 @@ export async function GET(request: Request) {
 
   const { data: appts, error } = await supabase
     .from('appointments')
-    .select('id,starts_at,ends_at,customer_name,customer_phone,customer_email,status,service_id')
+    .select('id,starts_at,ends_at,customer_name,customer_phone,customer_email,status,service_id,client_id')
     .eq('org_id', org.id)
     .gte('starts_at', startOfDay)
     .lte('starts_at', endOfDay)
